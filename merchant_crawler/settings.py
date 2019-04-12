@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 
 # Scrapy settings for merchant_crawler project
 #
@@ -14,12 +15,18 @@ BOT_NAME = 'merchant_crawler'
 SPIDER_MODULES = ['merchant_crawler.spiders']
 NEWSPIDER_MODULE = 'merchant_crawler.spiders'
 
+today = datetime.now()
+log_file_path = "log/scrapy_{}_{}_{}.log".format(today.year, today.month, today.day)
+
+# 日志输出
+LOG_LEVEL = 'DEBUG'
+LOG_FILE = log_file_path
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'merchant_crawler (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -46,15 +53,16 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
-#    'merchant_crawler.middlewares.MerchantCrawlerSpiderMiddleware': 543,
-#}
+# SPIDER_MIDDLEWARES = {
+   # 'merchant_crawler.middlewares.browser.selenium.SeleniumMiddleware': 543,
+# }
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
+DOWNLOADER_MIDDLEWARES = {
 #    'merchant_crawler.middlewares.MerchantCrawlerDownloaderMiddleware': 543,
-#}
+   'merchant_crawler.middlewares.browser.selenium.SeleniumMiddleware': 543,
+}
 
 # Enable or disable extensions
 # See https://doc.scrapy.org/en/latest/topics/extensions.html
@@ -64,9 +72,10 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
+ITEM_PIPELINES = {
 #    'merchant_crawler.pipelines.MerchantCrawlerPipeline': 300,
-#}
+    'merchant_crawler.middlewares.db.mySqlConnection.mySqlconnection': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
